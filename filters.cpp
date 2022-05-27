@@ -135,7 +135,24 @@ void brightness(ppm& img, float b, int start, int end)
 //Sharpen -- COMPLETE
 void sharpen(ppm &img)
 {
-	continue;
+	for(int i = 0; i < img.height; i++)
+	{
+		for(int j = 0; j < img.width; j++)
+		{
+			int R = img.getPixel(i,j).r;
+			int G = img.getPixel(i,j).g;
+			int B = img.getPixel(i,j).b;
+
+			int result = (R + G + B) / 3;
+
+			result = truncate(result);
+
+			img.setPixel(i,j, pixel(result,result,result));
+
+			
+
+		}		
+	}
 }
 
 //Others

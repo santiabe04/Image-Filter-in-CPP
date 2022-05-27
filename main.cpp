@@ -55,11 +55,11 @@ int main(int argc, char *argv[])
 	}
 	else if (filter == "crop")
 	{
-		int width = widthSize(img);
-		int heigth = heigthSize(img);
+		int img_width = widthSize(img);
+		int img_heigth = heigthSize(img);
 
 		//Creates a new ppm empty file
-		ppm.ppm(int width, int heigth);
+		ppm.ppm((img_width - p1), (img_heigth - p2));
 		
 		crop(img, heigth, width);
 	}
