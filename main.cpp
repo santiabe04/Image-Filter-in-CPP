@@ -27,11 +27,15 @@ int main(int argc, char *argv[])
 
 	string filter = string(argv[1]);
 	unsigned int n = atoi(argv[2]);
+	if(n < 0){n = 0;}
 	float p1 = atof(argv[3]);
 	string img1(argv[4]);
 	string out = string(argv[5]);
+	float p2 = atof(argv[6]);
+	// poner if en p2
 
 	ppm img(img1);
+	ppm img2(img.width - p1, img.height - p2);
 
 	cout << "Aplicando filtros" << endl;
 	struct timespec start, stop;
@@ -39,29 +43,44 @@ int main(int argc, char *argv[])
 
 	if (filter == "plain")
 	{
-		plain(img, (unsigned char)p1);
+		if(n == 0 or n == 1){plainFilter(img, (unsigned char) p1, 0, img.height);}
+		else{plainThread(img, (unsigned char) p1, n);}
 	}
 	else if (filter == "blackWhite")
 	{
-		blackWhite(img);
+		if(n == 0 or n == 1){blackWhiteFilter(img, 0, img.height);}
+		else{blackWhiteThread(img, n);}
 	}
 	else if (filter == "brightness")
 	{
-		brightness(img, p1, 1, 1);
+		if(n == 0 or n == 1){brightnessFilter(img, p1, 0, img.height);}
+		else{brightnessThread(img, p1, n);}
 	}
 	else if (filter == "contrast")
 	{
-		contrast(img, p1);
+		if(n == 0 or n == 1){contrastFilter(img, p1, 0, img.height);}
+		else{contrastThread(img, p1, n);}
 	}
 	else if (filter == "crop")
 	{
-		int width = widthSize(img);
-		int heigth = heigthSize(img);
-
-		//Creates a new ppm empty file
-		ppm.ppm(int width, int heigth);
-		
-		crop(img, heigth, width);
+		if(n == 0 or n == 1){cropFilter(img, p1, p2, img2, 0, img.height);}
+		else{cropThread(img, p1, p2, img2, n);}
+	}
+	else if (filter == "sharpen")
+	{
+		if(n == 0 or n == 1){sharpenFilter(img, 0, img.height);}
+		else{sharpenThread(img, n);}
+	}
+	else if (filter == "coloredge")
+	{
+		if(n == 0 or n == 1){colorEdgeFilter(img, 0, img.height);}
+		else{colorEdgeThread(img, n);}
+	}
+	else if (filter == "zoom")
+	{
+		ppm img3(img.width * p1, img.height * p1);
+		if(n == 0 or n == 1){zoomFilter(img, img3, p1, 0, img.height);}
+		else{zoomThread(img, img3, p1, n);}
 	}
 
 	clock_gettime(CLOCK_REALTIME, &stop);
@@ -72,7 +91,6 @@ int main(int argc, char *argv[])
 
 	cout << "Escribiendo imagen" << endl;
 	img.write(out);
-
 	cout << "Listo" << endl;
 	return 0;
 }
