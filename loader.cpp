@@ -3,12 +3,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fstream>      // std::ofstream
-#include <experimental/filesystem>
+#include <filesystem>
 #include "filters.h"
 #define ONE_OVER_BILLION 1E-9
 using namespace std;
-namespace fs = std::experimental::filesystem;
-
+using namespace filesystem;
 
 int main(int argc , char* argv[]){
 
@@ -19,10 +18,11 @@ int main(int argc , char* argv[]){
 
 	string filter = string(argv[1]);
 	unsigned int n = atoi(argv[2]);
+	if(n < 0){n = 0;}
 	float p1 = atof(argv[3]);
 	string img1(argv[4]);
 	string dir = string(argv[4]); //direccion de la carpeta
-	fs::path out_dir = fs::path(dir);
+	filesystem::path out_dir = fs::path(dir);
 	bool single_thread = n == 1;
 	float p2 = atof(argv[6]);
 
@@ -30,7 +30,7 @@ int main(int argc , char* argv[]){
 	struct timespec start, stop;    	
 	clock_gettime(CLOCK_REALTIME, &start);
 
-    for (const auto & image : fs::directory_iterator(dir))
+    for (const auto & image : filesystem::directory_iterator(dir))
     {
 		auto img_path = image.path();
 		if (img_path.extension() != ".ppm") continue;
@@ -39,25 +39,49 @@ int main(int argc , char* argv[]){
 
         ppm img(img_path);
 		if (filter == "plain")
-		plain(img, (unsigned char)p1);
-		
+		{
+			if(n == 0 or n == 1){plainFilter(img, (unsigned char) p1, 0, img.height);}
+			else{plainThread(img, (unsigned char) p1, n);}
+		}
 		else if(filter == "blackWhite")
 		{
-			if (single_thread)
-				blackWhite(img);}
-
+			if(n == 0 or n == 1){blackWhiteFilter(img, 0, img.height);}
+			else{blackWhiteThread(img, n);}
+		}
+		else if (filter == "brightness")
+		{
+			if(n == 0 or n == 1){brightnessFilter(img, p1, 0, img.height);}
+			else{brightnessThread(img, p1, n);}
+		}
 		else if(filter == "contrast")
 		{	
-			if (single_thread)
-				contrast(img,(unsigned char)p1);
+			if(n == 0 or n == 1){contrastFilter(img, p1, 0, img.height);}
+			else{contrastThread(img, p1, n);}
+		}
+		else if (filter == "crop")
+		{
+			ppm img2(img.width - p1, img.height - p2);
+			if(n == 0 or n == 1){cropFilter(img, p1, p2, img2, 0, img.height);}
+			else{cropThread(img, p1, p2, img2, n);}
+		}
+		else if (filter == "sharpen")
+		{
+			if(n == 0 or n == 1){sharpenFilter(img, 0, img.height);}
+			else{sharpenThread(img, n);}
+		}
+		else if (filter == "coloredge")
+		{
+			if(n == 0 or n == 1){colorEdgeFilter(img, 0, img.height);}
+			else{colorEdgeThread(img, n);}
 		}
 		else if (filter == "zoom")
 		{
-			ppm img_orig(img_path);
-			zoom(img,img_orig,p1);
+			ppm img2(img.width * p1, img.height * p1);
+			if(n == 0 or n == 1){zoomFilter(img, img2, p1, 0, img.height);}
+			else{zoomThread(img, img2, p1, n);}
 		}	
 
-		fs::path out_path = out_dir; 
+		filesystem::path out_path = out_dir; 
 
 		//Le agregas al final del nombre del archivo el nombre del filtro.
 		out_path /= string(img_path.stem()) + "_" + filter + ".ppm";

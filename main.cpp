@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
 	// poner if en p2
 
 	ppm img(img1);
-	ppm img2(img.width - p1, img.height - p2);
 
 	cout << "Aplicando filtros" << endl;
 	struct timespec start, stop;
@@ -63,6 +62,7 @@ int main(int argc, char *argv[])
 	}
 	else if (filter == "crop")
 	{
+		ppm img2(img.width - p1, img.height - p2);
 		if(n == 0 or n == 1){cropFilter(img, p1, p2, img2, 0, img.height);}
 		else{cropThread(img, p1, p2, img2, n);}
 	}
