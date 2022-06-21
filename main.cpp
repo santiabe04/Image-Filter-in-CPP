@@ -45,37 +45,44 @@ int main(int argc, char *argv[])
 		if(n == 0 or n == 1){plainFilter(img, (unsigned char) p1, 0, img.height);}
 		else{plainThread(img, (unsigned char) p1, n);}
 	}
+
 	else if (filter == "blackWhite")
 	{
 		if(n == 0 or n == 1){blackWhiteFilter(img, 0, img.height);}
 		else{blackWhiteThread(img, n);}
 	}
+
 	else if (filter == "brightness")
 	{
 		if(n == 0 or n == 1){brightnessFilter(img, p1, 0, img.height);}
 		else{brightnessThread(img, p1, n);}
 	}
+
 	else if (filter == "contrast")
 	{
 		if(n == 0 or n == 1){contrastFilter(img, p1, 0, img.height);}
 		else{contrastThread(img, p1, n);}
 	}
+
 	else if (filter == "crop")
 	{
 		ppm img2(img.width - p1, img.height - p2);
 		if(n == 0 or n == 1){cropFilter(img, p1, p2, img2, 0, img.height);}
 		else{cropThread(img, p1, p2, img2, n);}
 	}
+
 	else if (filter == "sharpen")
 	{
 		if(n == 0 or n == 1){sharpenFilter(img, 0, img.height);}
 		else{sharpenThread(img, n);}
 	}
+
 	else if (filter == "coloredge")
 	{
 		if(n == 0 or n == 1){colorEdgeFilter(img, 0, img.height);}
 		else{colorEdgeThread(img, n);}
 	}
+
 	else if (filter == "zoom")
 	{
 		ppm img3(img.width * p1, img.height * p1);
